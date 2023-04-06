@@ -99,13 +99,15 @@ def make_graph():
     add_edge(graph_v, graph, 'El Paso', 'San Antonio', 4)
 
     print_graph(graph)
-    #can be commented out while testing logic, this is for final demonatration
-    graph_v.visualize()
+
     # find path between to nodes
     dijkst(graph, "Portland", "Fresno")
 
     # TODO call func to remove a node
     # TODO rerun dijkst func
+
+    # must be the last func, can be commented out while testing logic, this is for final demonatration
+    graph_v.visualize()
 
 
 if __name__ == '__main__':
