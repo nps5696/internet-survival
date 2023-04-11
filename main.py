@@ -5,13 +5,14 @@
 
 import networkx as nx
 import matplotlib.pyplot as plt
+import heapq
+from collections import defaultdict
 
 class GraphVisualization:
 
     def __init__(self):
-
         self.visual = []
-        #self.nodes = []
+        self.nodes = []
 
     def addEdge(self, a, b):
         temp = [a, b]
@@ -26,7 +27,7 @@ class GraphVisualization:
 
     def visualize(self):
         G = nx.Graph()
-        #G.add_nodes_from(self.nodes)
+        G.add_nodes_from(self.nodes)
         G.add_edges_from(self.visual)
         nx.draw_networkx(G)
         plt.show()
@@ -34,9 +35,8 @@ class GraphVisualization:
 class Graph():
     def __init__(self):
         self.edges = {}
-        #self.costs =
 
-    def add_edges(self, graph_ui, graph_items): #node_1, node_2, cost):
+    def add_edges(self, graph_ui, graph_items):
         for node in graph_items:
 
             # if node doesn't exist create one as dict of lists
@@ -70,25 +70,42 @@ class Graph():
             print("node: " + str(key) + " , edges: " + str(value[::1]) )
 
 
-
 # has to be separate function
-def dijkst(graph, node_a, node_b):
+def dijkst(graph, start, end):
+    # Creates a dictionary to hold the distances
+    distances = {vertex: float('inf') for vertex in graph}
+    distances[start] = 0
 
-    print("Find path between node A: " + str(node_a) + \
-          " and node B: " + str(node_b))
+    previous_vertices = {vertex: None for vertex in graph}
 
-    # TODO Dijkstra algorithm
-    path = {node_a: (None, 0)}
-    cur_node = node_a
-    visited_node = set()
+    # Creates a priority queue to store the vertices to visit next, ordered by their tentative distances
+    priority_queue = [(0, start)]
 
-    while cur_node != node_b:
-        visited_node.add(cur_node)
-        cur_node_neighbours = graph.edges[cur_node]
-        cost_to_cur_node = path[cur_node][1]
+    while len(priority_queue) > 0:
+        curr_distance, curr_vertex = heapq.heappop(priority_queue)
 
-        for node in cur_node_neighbours:
-            cost = graph.cost
+        # Ignores the vertex if a shorter path is found
+        if curr_distance > distances[curr_vertex]:
+            continue
+
+        # For each neighbor of the current vertex, it calculates the distance and updates the dictionaries
+        for neighbor, weight in graph[curr_vertex].items():
+            distance = curr_distance + weight
+            if distance < distances[neighbor]:
+                distances[neighbor] = distance
+                previous_vertices[neighbor] = curr_vertex
+                # Stores the distance of the city and the neighbor nodes of the city
+                heapq.heappush(priority_queue, (distance, neighbor))
+
+    shortest_path = []
+    current_vertex = end
+    # Loops through the previous vertices and adds them to the shortest_path list to keep track of the path
+    while current_vertex is not None:
+        shortest_path.insert(0, current_vertex)
+        current_vertex = previous_vertices[current_vertex]
+
+    # Return the distances and shortest path as a tuple
+    return distances[end], shortest_path
 
 
 if __name__ == '__main__':
@@ -132,7 +149,6 @@ if __name__ == '__main__':
     ]
 
 
-
     # init graph UI
     graph_ui = GraphVisualization()
     # init graph datastructure
@@ -145,8 +161,19 @@ if __name__ == '__main__':
     G.delete_node('Dallas')
     G.print_graph()
 
-    # find path between to nodes
-    # TODO dijkst(G, "Portland", "Fresno")
+    # Converts list to a dictionary of dictionaries
+    graph = {}
+    for source, destination, cost in graph_items:
+        if source not in graph:
+            graph[source] = {}
+        if destination not in graph:
+            graph[destination] = {}
+        graph[source][destination] = cost
+        graph[destination][source] = cost
+
+
+    # finds a path between two nodes
+    print(dijkst(graph, "Portland", "Fresno"))
 
     # TODO call func to remove a node
     # TODO rerun dijkst func
