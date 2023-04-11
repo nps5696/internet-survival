@@ -173,7 +173,7 @@ if __name__ == '__main__':
 
 
     # finds a path between two nodes
-    print(dijkst(graph, "Portland", "Fresno"))
+    print("Path between two cities: " + str(dijkst(graph, "Portland", "San Francisco")))
 
     # TODO call func to remove a node
     # TODO rerun dijkst func
