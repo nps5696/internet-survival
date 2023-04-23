@@ -6,6 +6,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import heapq
+import random
 from collections import defaultdict
 
 class GraphVisualization:
@@ -68,13 +69,24 @@ class Graph():
             #print("key: " + str(key) + " values: " + str(values))
             edge_number = 0
             for value in values:
-                #print("searching for value " + node + " in: " + str(value))
+                #print("searching for value " + node + " in: " + str(values[edge_number]) + " checking city: " + str(values[edge_number][0]))
                 if value[0] == node:
-                    #print("deleting edge: " + str(value))
+                    #print("deleting edge: " + str(self.edges[key][edge_number]))
                     del self.edges[key][edge_number]
-                    edge_number +=1
+                    edge_number -= 1
+                edge_number +=1
         return 0
 
+    def get_2_rand_nodes(self):
+        nodes = [i for i in self.edges.keys()]
+        rand_node_1 = random.choice(nodes)
+        rand_node_2 = random.choice(nodes)
+        while rand_node_1 == rand_node_2:
+            print("Matching nodes picked, regenerating..")
+            rand_node_1 = random.choice(nodes)
+            rand_node_2 = random.choice(nodes)
+
+        return rand_node_1, rand_node_2
 
     def get_node_neighbours(self, node):
         if self.edges[node]:
@@ -134,41 +146,62 @@ def dijkst(graph, start, end):
 if __name__ == '__main__':
 
     graph_items = [
-        ['Chicago', 'Clevelend', 10],
-        ['Chicago', 'Indianapolis', 10],
-        ['Indianapolis', 'Cincinnati', 10],
-        ['Seattle', 'Portland', 7],
-        ['Seattle', 'Salt Lake City', 13],
-        ['Portland', 'Sacramento', 9],
-        ['Portland', 'Salt Lake City', 12],
-        ['Sacramento', 'San Francisco', 2],
-        ['Sacramento', 'Fresno', 3],
-        ['Sacramento', 'Salt Lake City', 5],
-        ['San Francisco', 'San Jose', 1],
-        ['San Jose', 'Santa Barbara', 4],
-        ['Santa Barbara', 'Fresno', 3],
-        ['Santa Barbara', 'Las Vegas', 2],
-        ['Santa Barbara', 'Los Angeles', 0.5],
-        ['Santa Barbara', 'Phoenix', 4],
-        ['Los Angeles', 'San Diego', 0.6],
-        ['San Diego', 'Phoenix', 4],
-        ['Salt Lake City', 'Denver', 5],
-        ['Salt Lake City', 'Colorado Springs', 6],
-        ['Phoenix', 'Tucson', 1],
-        ['Las Vegas', 'Tucson', 3],
-        ['Colorado Springs', 'Santa Fe', 3],
-        ['Santa Fe', 'El Paso', 2],
-        ['Denver', 'Lincoln', 4],
-        ['Colorado Springs', 'Topeka', 5],
-        ['Colorado Springs', 'Amarillo', 3],
-        ['Colorado Springs', 'Lubbock', 4.5],
-        ['Amarillo', 'Lubbock', 1],
-        ['El Paso', 'Amarillo', 5],
-        ['Lubbock', 'Odessa', 1.3],
-        ['Lubbock', 'Dallas', 3],
-        ['Odessa', 'Dallas', 2],
-        ['El Paso', 'Dallas', 3],
-        ['El Paso', 'San Antonio', 4],
+        ['Boston', 'New York', 215],
+        ['Boston', 'Portland', 105],
+        ['Boston', 'Montreal', 307],
+        ['New York', 'Philadelphia', 94],
+        ['New York', 'Baltimore', 188],
+        ['New York', 'Boston', 215],
+        ['Philadelphia', 'Baltimore', 102],
+        ['Philadelphia', 'Washington D.C.', 142],
+        ['Baltimore', 'Washington D.C.', 38],
+        ['Montreal', 'Ottawa', 201],
+        ['Ottawa', 'Toronto', 269],
+        ['Toronto', 'Detroit', 279],
+        ['Toronto', 'Buffalo', 105],
+        ['Detroit', 'Chicago', 283],
+        ['Chicago', 'Milwaukee', 89],
+        ['Chicago', 'Indianapolis', 182],
+        ['Chicago', 'St. Louis', 297],
+        ['Milwaukee', 'Minneapolis', 337],
+        ['Minneapolis', 'St. Paul', 11],
+        ['St. Paul', 'Fargo', 267],
+        ['Fargo', 'Bismarck', 191],
+        ['Bismarck', 'Billings', 428],
+        ['Billings', 'Spokane', 464],
+        ['Spokane', 'Seattle', 279],
+        ['Seattle', 'Portland', 173],
+        ['Portland', 'San Francisco', 634],
+        ['San Francisco', 'Los Angeles', 382],
+        ['Los Angeles', 'San Diego', 124],
+        ['San Diego', 'Phoenix', 355],
+        ['Phoenix', 'Albuquerque', 421],
+        ['Albuquerque', 'Denver', 449],
+        ['Denver', 'Salt Lake City', 370],
+        ['Salt Lake City', 'Boise', 346],
+        ['Boise', 'Helena', 429],
+        ['Helena', 'Butte', 68],
+        ['Butte', 'Spokane', 396],
+        ['Spokane', 'Boise', 290],
+        ['Salt Lake City', 'Las Vegas', 421],
+        ['Las Vegas', 'Los Angeles', 435],
+        ['Los Angeles', 'Phoenix', 373],
+        ['Phoenix', 'Santa Fe', 483],
+        ['Santa Fe', 'Oklahoma City', 543],
+        ['Oklahoma City', 'Dallas', 206],
+        ['Dallas', 'Houston', 239],
+        ['Houston', 'New Orleans', 352],
+        ['New Orleans', 'Mobile', 162],
+        ['Mobile', 'Tallahassee', 204],
+        ['Tallahassee', 'Atlanta', 225],
+        ['Atlanta', 'Nashville', 250],
+        ['Nashville', 'Louisville', 173],
+        ['Louisville', 'Columbus', 204],
+        ['Columbus', 'Pittsburgh', 185],
+        ['Pittsburgh', 'Cleveland', 129],
+        ['Cleveland', 'Detroit', 168],
+        ['Detroit', 'Buffalo', 295],
+        ['Buffalo', 'Rochester', 73]
     ]
 
 
@@ -179,10 +212,9 @@ if __name__ == '__main__':
     # populate graph with edges and nodes
     G.add_edges(graph_ui, graph_items)
 
-    G.print_graph()
-    print("--------------- Updated Graph ---------------")
-    G.delete_node('Dallas')
-    G.print_graph()
+    #G.print_graph()
+    #print("--------------- Updated Graph ---------------")
+    #G.print_graph()
 
     # # Converts list to a dictionary of dictionaries
     # graph = {}
@@ -197,9 +229,15 @@ if __name__ == '__main__':
 
     # finds a path between two nodes
     #print("Path between two cities: " + str(dijkst(G, "Cincinnati", "Clevelend")))
-    G.delete_node("Chicago")
-    #G.print_graph()
-    print('Path between two cities: ' + str(dijkst(G, "Cincinnati", "Clevelend")))
+
+    # print('Path between two cities: ' + str(dijkst(G, "Boston", "Santa Fe")))
+    # G.delete_node("San Francisco")
+    # #G.print_graph()
+    # print('Path between two cities: ' + str(dijkst(G, "Boston", "Santa Fe")))
+
+    for i in range(100):
+        node_1, node_2 = G.get_2_rand_nodes()
+        print("Network route between city: " + str(node_1) + " and " + node_2 + " is " + str(dijkst(G, node_1, node_2)))
 
 
     # TODO call func to remove a node
