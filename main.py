@@ -57,9 +57,28 @@ class Graph():
             self.edges[node[1]].append((node[0], node[2]))
 
     def delete_node(self, node):
+        # remove node itself
         if self.edges[node]:
             del self.edges[node]
-            return 0
+        else:
+            print("Node was not found!")
+            return 1
+        # remove vetrices to the node
+        for key, values in self.edges.items():
+            #print("key: " + str(key) + " values: " + str(values))
+            edge_number = 0
+            for value in values:
+                #print("searching for value " + node + " in: " + str(value))
+                if value[0] == node:
+                    #print("deleting edge: " + str(value))
+                    del self.edges[key][edge_number]
+                    edge_number +=1
+        return 0
+
+
+    def get_node_neighbours(self, node):
+        if self.edges[node]:
+            return self.edges[node]
         else:
             print("Node was not found!")
             return 1
@@ -73,10 +92,10 @@ class Graph():
 # has to be separate function
 def dijkst(graph, start, end):
     # Creates a dictionary to hold the distances
-    distances = {vertex: float('inf') for vertex in graph}
+    distances = {key: float('inf') for key, value in graph.edges.items()}
     distances[start] = 0
 
-    previous_vertices = {vertex: None for vertex in graph}
+    previous_vertices = {key: None for key, value in graph.edges.items()}
 
     # Creates a priority queue to store the vertices to visit next, ordered by their tentative distances
     priority_queue = [(0, start)]
@@ -89,7 +108,11 @@ def dijkst(graph, start, end):
             continue
 
         # For each neighbor of the current vertex, it calculates the distance and updates the dictionaries
-        for neighbor, weight in graph[curr_vertex].items():
+
+        # find neighbours
+        curr_neighbors = graph.get_node_neighbours(curr_vertex)
+
+        for neighbor, weight in curr_neighbors:
             distance = curr_distance + weight
             if distance < distances[neighbor]:
                 distances[neighbor] = distance
@@ -118,7 +141,7 @@ if __name__ == '__main__':
         ['Seattle', 'Salt Lake City', 13],
         ['Portland', 'Sacramento', 9],
         ['Portland', 'Salt Lake City', 12],
-        ['Sacramento', 'San Fransisco', 2],
+        ['Sacramento', 'San Francisco', 2],
         ['Sacramento', 'Fresno', 3],
         ['Sacramento', 'Salt Lake City', 5],
         ['San Francisco', 'San Jose', 1],
@@ -161,19 +184,23 @@ if __name__ == '__main__':
     G.delete_node('Dallas')
     G.print_graph()
 
-    # Converts list to a dictionary of dictionaries
-    graph = {}
-    for source, destination, cost in graph_items:
-        if source not in graph:
-            graph[source] = {}
-        if destination not in graph:
-            graph[destination] = {}
-        graph[source][destination] = cost
-        graph[destination][source] = cost
+    # # Converts list to a dictionary of dictionaries
+    # graph = {}
+    # for source, destination, cost in graph_items:
+    #     if source not in graph:
+    #         graph[source] = {}
+    #     if destination not in graph:
+    #         graph[destination] = {}
+    #     graph[source][destination] = cost
+    #     graph[destination][source] = cost
 
 
     # finds a path between two nodes
-    print("Path between two cities: " + str(dijkst(graph, "Portland", "San Francisco")))
+    #print("Path between two cities: " + str(dijkst(G, "Cincinnati", "Clevelend")))
+    G.delete_node("Chicago")
+    #G.print_graph()
+    print('Path between two cities: ' + str(dijkst(G, "Cincinnati", "Clevelend")))
+
 
     # TODO call func to remove a node
     # TODO rerun dijkst func
