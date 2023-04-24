@@ -62,16 +62,16 @@ class Graph():
         if self.edges[node]:
             del self.edges[node]
         else:
-            print("Node was not found!")
+            #print("Node for deletion was not found!") #debugging
             return 1
         # remove vetrices to the node
         for key, values in self.edges.items():
-            #print("key: " + str(key) + " values: " + str(values))
+            #print("key: " + str(key) + " values: " + str(values)) #debugging
             edge_number = 0
             for value in values:
-                #print("searching for value " + node + " in: " + str(values[edge_number]) + " checking city: " + str(values[edge_number][0]))
+                #print("searching for value " + node + " in: " + str(values[edge_number]) + " checking city: " + str(values[edge_number][0])) #debugging
                 if value[0] == node:
-                    #print("deleting edge: " + str(self.edges[key][edge_number]))
+                    #print("deleting edge: " + str(self.edges[key][edge_number])) #debugging
                     del self.edges[key][edge_number]
                     edge_number -= 1
                 edge_number +=1
@@ -88,12 +88,22 @@ class Graph():
 
         return rand_node_1, rand_node_2
 
-    def get_node_neighbours(self, node):
+    def get_rand_node(self, node_1, node_2):
+        # deleting node which is not start of end node
+        nodes = [i for i in self.edges.keys()]
+        rand_node = random.choice(nodes)
+        while rand_node in [node_1, node_2]:
+            print("Start/End nodes picked, regenerating..")
+            rand_node = random.choice(nodes)
+
+        return rand_node
+
+    def get_node_neighbors(self, node):
         if self.edges[node]:
             return self.edges[node]
         else:
-            print("Node was not found!")
-            return 1
+            print("Neighbor nodes not found!")
+            return -1
 
     def print_graph(self):
         # print all nodes and edges with weight, nodes are dict. keys and edges with weights are tuples
@@ -121,11 +131,17 @@ def dijkst(graph, start, end):
 
         # For each neighbor of the current vertex, it calculates the distance and updates the dictionaries
 
-        # find neighbours
-        curr_neighbors = graph.get_node_neighbours(curr_vertex)
+        # find neighbors
+        curr_neighbors = graph.get_node_neighbors(curr_vertex)
+        # no neighbors found, exit control
+        if curr_neighbors == -1:
+            return -1, -1
 
         for neighbor, weight in curr_neighbors:
             distance = curr_distance + weight
+            # no key found, node was just removed, exiting
+            if neighbor not in distances.keys():
+                return -1, -1
             if distance < distances[neighbor]:
                 distances[neighbor] = distance
                 previous_vertices[neighbor] = curr_vertex
@@ -212,36 +228,52 @@ if __name__ == '__main__':
     # populate graph with edges and nodes
     G.add_edges(graph_ui, graph_items)
 
-    #G.print_graph()
-    #print("--------------- Updated Graph ---------------")
-    #G.print_graph()
 
-    # # Converts list to a dictionary of dictionaries
-    # graph = {}
-    # for source, destination, cost in graph_items:
-    #     if source not in graph:
-    #         graph[source] = {}
-    #     if destination not in graph:
-    #         graph[destination] = {}
-    #     graph[source][destination] = cost
-    #     graph[destination][source] = cost
-
+    #G.print_graph() #debugging
 
     # finds a path between two nodes
     #print("Path between two cities: " + str(dijkst(G, "Cincinnati", "Clevelend")))
 
-    # print('Path between two cities: ' + str(dijkst(G, "Boston", "Santa Fe")))
-    # G.delete_node("San Francisco")
-    # #G.print_graph()
-    # print('Path between two cities: ' + str(dijkst(G, "Boston", "Santa Fe")))
+    # func caller, avarage "node num failure" produced here
+    fail_num_tracker = []
 
-    for i in range(100):
+    for i in range(1000):
+
+        G = Graph()
+        # populate graph with edges and nodes
+        G.add_edges(graph_ui, graph_items)
+        # pick two random nodes for network route planning
         node_1, node_2 = G.get_2_rand_nodes()
-        print("Network route between city: " + str(node_1) + " and " + node_2 + " is " + str(dijkst(G, node_1, node_2)))
+
+        dist, init_path = dijkst(G, node_1, node_2)
+        run_num = 0
+        max_run_num = len(G.edges.keys())
+        while dist != float('inf'):
+            if run_num > max_run_num:
+                print("Neigboring nodes, not possible to disrupt network!")
+                break
+            node_for_deletion = G.get_rand_node(node_1, node_2)
+            #print("Deleting node: " + str(node_for_deletion)) #debugging
+            G.delete_node(node_for_deletion)
+
+            dist, path = dijkst(G, node_1, node_2)
+            # no neighbor found, no net. path possible
+            if dist == path == -1:
+                dist = float('inf')
+
+            #print("Network route between city: " + str(node_1) + " and " + node_2 + " is " + str(dist) + str(path)) #debugging
+            run_num += 1
+
+        print("Route : " + str(init_path) + " unreachable after deleting last node: " + str(node_for_deletion))
+        print("Number Of nodes deleted until network path unreachable: " + str(run_num))
+        fail_num_tracker.append(run_num)
 
 
-    # TODO call func to remove a node
-    # TODO rerun dijkst func
+    print("###########################################################################")
+    print("Nodes deleted until network failure occured: " + str(fail_num_tracker) \
+          + "\nAverage number of nodes needed for network path to become unreachable: " \
+          + str(int(sum(fail_num_tracker)/len(fail_num_tracker))))
+    print("###########################################################################")
 
 
     # must be the last func, can be commented out while testing logic, this is for final demonatration
