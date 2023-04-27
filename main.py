@@ -82,7 +82,7 @@ class Graph():
         rand_node_1 = random.choice(nodes)
         rand_node_2 = random.choice(nodes)
         while rand_node_1 == rand_node_2:
-            print("Matching nodes picked, regenerating..")
+            #print("Matching nodes picked, regenerating..")
             rand_node_1 = random.choice(nodes)
             rand_node_2 = random.choice(nodes)
 
@@ -93,7 +93,7 @@ class Graph():
         nodes = [i for i in self.edges.keys()]
         rand_node = random.choice(nodes)
         while rand_node in [node_1, node_2]:
-            print("Start/End nodes picked, regenerating..")
+            #print("Start/End nodes picked, regenerating..")
             rand_node = random.choice(nodes)
 
         return rand_node
@@ -102,7 +102,7 @@ class Graph():
         if self.edges[node]:
             return self.edges[node]
         else:
-            print("Neighbor nodes not found!")
+            #print("Neighbor nodes not found!")
             return -1
 
     def print_graph(self):
@@ -237,43 +237,95 @@ if __name__ == '__main__':
     # func caller, avarage "node num failure" produced here
     fail_num_tracker = []
 
-    for i in range(1000):
+    # user interaction
+    while True:
+        # Get two nodes from user
+        node_1 = input("Enter the name of node 1: ")
+        node_2 = input("Enter the name of node 2: ")
 
-        G = Graph()
-        # populate graph with edges and nodes
-        G.add_edges(graph_ui, graph_items)
-        # pick two random nodes for network route planning
-        node_1, node_2 = G.get_2_rand_nodes()
-
+        # calculate the survivability
         dist, init_path = dijkst(G, node_1, node_2)
-        run_num = 0
-        max_run_num = len(G.edges.keys())
-        while dist != float('inf'):
-            if run_num > max_run_num:
-                print("Neigboring nodes, not possible to disrupt network!")
-                break
-            node_for_deletion = G.get_rand_node(node_1, node_2)
-            #print("Deleting node: " + str(node_for_deletion)) #debugging
-            G.delete_node(node_for_deletion)
 
-            dist, path = dijkst(G, node_1, node_2)
-            # no neighbor found, no net. path possible
-            if dist == path == -1:
-                dist = float('inf')
+        # check for invalid nodes
+        if dist == (-1, -1):
+            print("Invalid nodes. Please enter valid nodes.")
 
-            #print("Network route between city: " + str(node_1) + " and " + node_2 + " is " + str(dist) + str(path)) #debugging
-            run_num += 1
+        # print survivability
+        else:
+            print("The cost to travel of the internet traffic between city {0} and city {1} is {2}".format(
+                node_1, node_2, dist))
+            # failing nodes here
+            run_num = 0
+            max_run_num = len(G.edges.keys())
+            while dist != float('inf'):
+                if run_num > max_run_num:
+                    #print("Neigboring nodes, not possible to disrupt network!")
+                    break
+                node_for_deletion = G.get_rand_node(node_1, node_2)
+                # print("Deleting node: " + str(node_for_deletion)) #debugging
+                G.delete_node(node_for_deletion)
 
-        print("Route : " + str(init_path) + " unreachable after deleting last node: " + str(node_for_deletion))
-        print("Number Of nodes deleted until network path unreachable: " + str(run_num))
-        fail_num_tracker.append(run_num)
+                dist, path = dijkst(G, node_1, node_2)
+                # no neighbor found, no net. path possible
+                if dist == path == -1:
+                    dist = float('inf')
+
+                # print("Network route between city: " + str(node_1) + " and " + node_2 + " is " + str(dist) + str(path)) #debugging
+                run_num += 1
+
+            print("Route : " + str(init_path) + " unreachable after deleting last node: " + str(node_for_deletion))
+            print("Number Of nodes deleted until network path unreachable: " + str(run_num))
+            fail_num_tracker.append(run_num)
 
 
-    print("###########################################################################")
-    print("Nodes deleted until network failure occured: " + str(fail_num_tracker) \
-          + "\nAverage number of nodes needed for network path to become unreachable: " \
-          + str(int(sum(fail_num_tracker)/len(fail_num_tracker))))
-    print("###########################################################################")
+        # ask user if they want to exit the program
+        user_input = input("Do you want to exit the program? Enter Y/N: ")
+
+        if user_input == 'Y' or user_input == 'y':
+            print("Thank you for using the program!")
+            break
+    # end of user interaction
+
+    # user prompt to get fair average
+    user_input = input("Do you want to test survivalability test against whole graph: ")
+    if user_input == 'Y' or user_input == 'y':
+        for i in range(1000):
+
+            G = Graph()
+            # populate graph with edges and nodes
+            G.add_edges(graph_ui, graph_items)
+            # pick two random nodes for network route planning
+            node_1, node_2 = G.get_2_rand_nodes()
+
+            dist, init_path = dijkst(G, node_1, node_2)
+            run_num = 0
+            max_run_num = len(G.edges.keys())
+            while dist != float('inf'):
+                if run_num > max_run_num:
+                    #print("Neigboring nodes, not possible to disrupt network!")
+                    break
+                node_for_deletion = G.get_rand_node(node_1, node_2)
+                #print("Deleting node: " + str(node_for_deletion)) #debugging
+                G.delete_node(node_for_deletion)
+
+                dist, path = dijkst(G, node_1, node_2)
+                # no neighbor found, no net. path possible
+                if dist == path == -1:
+                    dist = float('inf')
+
+                #print("Network route between city: " + str(node_1) + " and " + node_2 + " is " + str(dist) + str(path)) #debugging
+                run_num += 1
+
+            #print("Route : " + str(init_path) + " unreachable after deleting last node: " + str(node_for_deletion))
+            #print("Number Of nodes deleted until network path unreachable: " + str(run_num))
+            fail_num_tracker.append(run_num)
+
+
+        print("###########################################################################")
+        print("Nodes deleted until network failure occured: " + str(fail_num_tracker) \
+              + "\nAverage number of nodes needed for network path to become unreachable: " \
+              + str(int(sum(fail_num_tracker)/len(fail_num_tracker))))
+        print("###########################################################################")
 
 
     # must be the last func, can be commented out while testing logic, this is for final demonatration
