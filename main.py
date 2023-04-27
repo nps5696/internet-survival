@@ -85,7 +85,7 @@ class Graph():
         rand_node_1 = random.choice(nodes)
         rand_node_2 = random.choice(nodes)
         while rand_node_1 == rand_node_2:
-            print("Matching nodes picked, regenerating..")
+            #print("Matching nodes picked, regenerating..")
             rand_node_1 = random.choice(nodes)
             rand_node_2 = random.choice(nodes)
 
@@ -96,7 +96,7 @@ class Graph():
         nodes = [i for i in self.edges.keys()]
         rand_node = random.choice(nodes)
         while rand_node in [node_1, node_2]:
-            print("Start/End nodes picked, regenerating..")
+            # print("Start/End nodes picked, regenerating..")
             rand_node = random.choice(nodes)
 
         return rand_node
@@ -105,7 +105,7 @@ class Graph():
         if self.edges[node]:
             return self.edges[node]
         else:
-            print("Neighbor nodes not found!")
+            #print("Neighbor nodes not found!")
             return -1
 
     def print_graph(self):
