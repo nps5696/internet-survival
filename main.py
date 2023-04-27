@@ -231,6 +231,13 @@ if __name__ == '__main__':
     G.add_edges(graph_ui, graph_items)
 
     while True:
+
+        print("Choose an option below: ")
+        print("1. Manually choose nodes")
+        print("2. Network Survivabilty")
+        print("3. Exit Program")
+        input("Option: ")
+
         # Get two nodes from user
         node1 = input("Enter the name of node 1: ")
         node2 = input("Enter the name of node 2: ")
