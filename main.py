@@ -254,5 +254,51 @@ if __name__ == '__main__':
             print("Thank you for using the program!")
             sys.exit()
 
+    #  # G.print_graph() #debugging
+
+    # # finds a path between two nodes
+    # #print("Path between two cities: " + str(dijkst(G, "Cincinnati", "Clevelend")))
+
+    # # func caller, avarage "node num failure" produced here
+    # fail_num_tracker = []
+    # for i in range(1000):
+    #     # calculate the survivability
+    #     survivability = dijkst(G, node1, node2)
+
+    #     G = Graph()
+    #     # populate graph with edges and nodes
+    #     G.add_edges(graph_ui, graph_items)
+    #     # pick two random nodes for network route planning
+    #     node_1, node_2 = G.get_2_rand_nodes()
+
+    #     dist, init_path = dijkst(G, node_1, node_2)
+    #     run_num = 0
+    #     max_run_num = len(G.edges.keys())
+    #     while dist != float('inf'):
+    #         if run_num > max_run_num:
+    #             print("Neigboring nodes, not possible to disrupt network!")
+    #             break
+    #         node_for_deletion = G.get_rand_node(node_1, node_2)
+    #         # print("Deleting node: " + str(node_for_deletion)) #debugging
+    #         G.delete_node(node_for_deletion)
+
+    #         dist, path = dijkst(G, node_1, node_2)
+    #         # no neighbor found, no net. path possible
+    #         if dist == path == -1:
+    #             dist = float('inf')
+
+    #         # print("Network route between city: " + str(node_1) + " and " + node_2 + " is " + str(dist) + str(path)) #debugging
+    #         run_num += 1
+
+    #     print("Route : " + str(init_path) +
+    #           " unreachable after deleting last node: " + str(node_for_deletion))
+    #     print("Number Of nodes deleted until network path unreachable: " + str(run_num))
+    #     fail_num_tracker.append(run_num)
+    #     print("###########################################################################")
+    # print("Nodes deleted until network failure occured: " + str(fail_num_tracker)
+    #       + "\nAverage number of nodes needed for network path to become unreachable: "
+    #       + str(int(sum(fail_num_tracker)/len(fail_num_tracker))))
+    # print("###########################################################################")
+
     # must be the last func, can be commented out while testing logic, this is for final demonatration
     graph_ui.visualize()
