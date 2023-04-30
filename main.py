@@ -237,7 +237,9 @@ if __name__ == '__main__':
         print("Choose an option below: ")
         print("1. Manually choose nodes")
         print("2. Network Survivabilty")
-        print("3. Exit Program")
+        print("3: Print Graph and Exit")
+        print("4. Exit Program")
+
         user_input = input("Option: ")
 
         if user_input == '1':
@@ -320,9 +322,9 @@ if __name__ == '__main__':
                   + str(int(sum(fail_num_tracker)/len(fail_num_tracker))))
             print(
                 "###########################################################################")
-
         elif user_input == '3':
+            graph_ui.visualize()
+            sys.exit()
+        elif user_input == '4':
             print("Thank you for using the program!")
             sys.exit()
-    # must be the last func, can be commented out while testing logic, this is for final demonatration
-    graph_ui.visualize()
