@@ -235,10 +235,10 @@ if __name__ == '__main__':
     while True:
 
         print("Choose an option below: ")
-        print("1. Manually choose nodes")
+        print("1. Manually Choose Nodes")
         print("2. Network Survivabilty")
-        print("3: Print Graph and Exit")
-        print("4. Exit Program")
+        print("3: Print Map")
+        print("4. Exit ")
 
         user_input = input("Option: ")
 
@@ -266,7 +266,7 @@ if __name__ == '__main__':
                         #print("Neigboring nodes, not possible to disrupt network!")
                         break
                     node_for_deletion = G.get_rand_node(node_1, node_2)
-                    ##print("Deleting node: " + str(node_for_deletion)) #debugging
+                    # print("Deleting node: " + str(node_for_deletion)) #debugging
                     G.delete_node(node_for_deletion)
 
                     dist, path = dijkst(G, node_1, node_2)
@@ -274,11 +274,11 @@ if __name__ == '__main__':
                     if dist == path == -1:
                         dist = float('inf')
 
-                    ##print("Network route between city: " + str(node_1) + " and " + node_2 + " is " + str(dist) + str(path)) #debugging
+                    # print("Network route between city: " + str(node_1) + " and " + node_2 + " is " + str(dist) + str(path)) #debugging
                     run_num += 1
 
-                ##print("Route : " + str(init_path) +
-                ##      " unreachable after deleting last node: " + str(node_for_deletion))
+                # print("Route : " + str(init_path) +
+                # " unreachable after deleting last node: " + str(node_for_deletion))
                 print(
                     "Number Of nodes deleted until network path unreachable: " + str(run_num))
                 fail_num_tracker.append(run_num)
@@ -324,7 +324,6 @@ if __name__ == '__main__':
                 "###########################################################################")
         elif user_input == '3':
             graph_ui.visualize()
-            sys.exit()
         elif user_input == '4':
             print("Thank you for using the program!")
             sys.exit()
