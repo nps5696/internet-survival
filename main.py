@@ -1,6 +1,6 @@
 ####
 # PSU, Final Project - Internet Survival
-# Developers:
+# Developers: Bryan Naroditskiy, Colin George, Nikolay Sizov
 ####
 
 import networkx as nx
@@ -111,7 +111,6 @@ class Graph():
             print("node: " + str(key) + " , edges: " + str(value[::1]) )
 
 
-# has to be separate function
 def dijkst(graph, start, end):
     # Creates a dictionary to hold the distances
     distances = {key: float('inf') for key, value in graph.edges.items()}
